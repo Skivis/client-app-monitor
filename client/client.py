@@ -4,7 +4,7 @@ import sys
 try:
     import psutil
 except ImportError as e:
-    print e, "(pip install psutils)"
+    print e, "(pip install psutil)"
     sys.exit()
 
 from psutil import AccessDenied
