@@ -30,7 +30,7 @@ class Monitor(object):
         pid = self.get_process(self.name)
         process = psutil.Process(pid)
         while True:
-            print process.cpu_percent(interval=1)
+            print process.cpu_percent(interval=None)
             time.sleep(self.interval)
 
 
