@@ -1,0 +1,27 @@
+import time
+import psutil
+
+
+class Monitor(object):
+
+    def __init__(self, name):
+        print "asd"
+        self.name = name
+        self.interval = 1
+        self.run()
+
+    def get_process(self, name):
+        for process in psutil.process_iter():
+            if name in process.name():
+                return process.pid
+
+    def run(self):
+        pid = self.get_process(self.name)
+        process = psutil.Process(pid)
+        while True:
+            print process.cpu_percent(interval=1)
+            time.sleep(self.interval)
+
+
+if __name__ == "__main__":
+    Monitor("Skype")
