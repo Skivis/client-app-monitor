@@ -1,5 +1,13 @@
 import time
-import psutil
+import sys
+
+try:
+    import psutil
+except ImportError as e:
+    print e, "(pip install psutils)"
+    sys.exit()
+
+from psutil import AccessDenied
 
 
 class Monitor(object):
@@ -12,8 +20,11 @@ class Monitor(object):
 
     def get_process(self, name):
         for process in psutil.process_iter():
-            if name in process.name():
-                return process.pid
+            try:
+                if name in process.name():
+                    return process.pid
+            except AccessDenied as e:
+                print "access denied", e
 
     def run(self):
         pid = self.get_process(self.name)
