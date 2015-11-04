@@ -1,3 +1,3 @@
-from app.monitor import Monitor
+from app.monitor import AppMonitor
 
-Monitor("Skype")
+AppMonitor("Skype")

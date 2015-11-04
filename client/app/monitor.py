@@ -10,13 +10,17 @@ except ImportError as e:
 from psutil import AccessDenied
 
 
-class Monitor(object):
+class AppMonitor(object):
 
     def __init__(self, name):
-        print "asd"
         self.name = name
         self.interval = 1
         self.run()
+
+    def monitor(self, process):
+        print process.cpu_percent(interval=None)
+
+        process.update()
 
     def get_process(self, name):
         for process in psutil.process_iter():
@@ -29,6 +33,7 @@ class Monitor(object):
     def run(self):
         pid = self.get_process(self.name)
         process = psutil.Process(pid)
+
         while True:
-            print process.cpu_percent(interval=None)
+            self.monitor(process)
             time.sleep(self.interval)
