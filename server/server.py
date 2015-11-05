@@ -1,6 +1,7 @@
 import logging
 import bottle
 import collections
+import ast
 import json
 import sqlite3
 
@@ -9,71 +10,77 @@ from bottle import get, post, redirect, request, template
 
 @get('/')
 def index():
-    if not logged_in():
-        redirect('/login')
-    else:
-        redirect("/logs")
+    redirect("/logs")
 
 
 @get('/clients')
 @get('/clients/<client_id>')
 def show_clients(client_id=None):
-    if not logged_in():
-        redirect('/login')
+    if client_id:
+        with sqlite3.connect("data.db") as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM clients WHERE client_id=?", (client_id,))
+            data = cursor.fetchone()
+            cursor.close()
 
-    if client_id is not None:
+        if not data:
+            bottle.abort(404, "Sorry, client not found.")
+
         return "<p>Statistics for client: %s</p>" % client_id
 
-    conn = sqlite3.connect('data.db')
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-    c.execute("SELECT id, client_id, platform FROM clients")
-    result = c.fetchall()
-    c.close()
+    with sqlite3.connect("data.db") as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, client_id, platform FROM clients")
+        data = cursor.fetchall()
+        cursor.close()
 
-    return template('clients', clients=result)
+    return template('clients', clients=data)
 
 
 @post('/clients')
 def save_client():
     logging.basicConfig(level=logging.DEBUG)
-
     data = json.load(request.body, object_pairs_hook=collections.OrderedDict)
-
     logging.info(data)
-
-    conn = sqlite3.connect('data.db')
-    c = conn.cursor()
-    c.execute(
-        "INSERT INTO clients (client_id, platform) VALUES (?, ?)", data.values())
-    conn.commit()
-    c.close()
+    with sqlite3.connect("data.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT OR IGNORE INTO clients (client_id, platform) VALUES (?, ?)", data.values())
+        conn.commit()
+        cursor.close()
 
 
 @get('/logs')
 def show_logs():
-    # show all logs
-    if not logged_in():
-        redirect('/login')
-    return "<p>All logs</p>"
+    logging.basicConfig(level=logging.DEBUG)
+    with sqlite3.connect('data.db') as conn:
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("SELECT client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs")
+        data = c.fetchall()
+        c.close()
+
+    return template('logs', logs=data)
 
 
 @post('/logs')
 def save_logs():
-    # save logs to db
-    pass
+    logging.basicConfig(level=logging.DEBUG)
+    data = json.load(request.body, object_pairs_hook=collections.OrderedDict)
 
+    client_id = data.pop(0)
 
-@get('/login')
-def login_view():
-    if not logged_in():
-        return "<p>Login here</p>"
-    else:
-        redirect('/logs')
-
-
-def logged_in():
-    return True
+    with sqlite3.connect('data.db') as conn:
+        cursor = conn.cursor()
+        for row in data:
+            row = ast.literal_eval(row)
+            cursor.execute("INSERT INTO logs (client_id, level, cpu_percent, memory_percent, num_threads, time) VALUES (?, ?, ?, ?, ?, ?)",
+                           (client_id, row['level'], row['cpu_percent'], row['memory_percent'], row['num_threads'], row['time']))
+        conn.commit()
+        cursor.close()
 
 
 if __name__ == "__main__":

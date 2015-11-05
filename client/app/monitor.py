@@ -17,9 +17,20 @@ class AppMonitor(object):
 
     def monitor(self, process):
         process.update()
-        # TODO: some checking to determine whether to log
-        # process state and if so, what severity
-        self.log("CRITICAL", process.state)
+
+        if process.state['cpu_percent'] < 1:
+            return
+
+        if process.state["cpu_percent"] > 10:
+            level = "WARNING"
+        elif process.state["cpu_percent"] > 20:
+            level = "CRITICAL"
+        else:
+            level = "CAREFUL"
+
+        process.state['time'] = time.time()
+
+        self.log(level, process.state)
 
     def log(self, level, process):
         self.logger.log(level, process)

@@ -22,5 +22,5 @@ class Process(psutil.Process):
 
     def update(self):
         self.state = self.as_dict(attrs=[
-            "cpu_percent", "cpu_times", "memory_percent", "num_threads"])
+            "cpu_percent", "memory_percent", "num_threads"])
         self.state['time'] = time.time()

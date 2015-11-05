@@ -1,6 +1,8 @@
 import requests
 import json
 
+from requests.exceptions import ConnectionError
+
 
 class ApiClient(object):
 
@@ -15,4 +17,8 @@ class ApiClient(object):
 
     def post(self, data, url):
         endpoint = self.base_url + url
-        requests.post(endpoint, data=data)
+        try:
+            return requests.post(endpoint, data=data)
+        except ConnectionError as e:
+            print "connection error", e
+            return False

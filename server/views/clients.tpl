@@ -30,7 +30,7 @@
         %for host in clients:
         <tr>
           <td>{{host["id"]}}</td>
-          <td>{{host["client_id"]}}</td>
+          <td><a href="/clients/{{host["client_id"]}}">{{host["client_id"]}}</a></td>
           <td>{{host["platform"]}}</td>
         </tr>
         %end
