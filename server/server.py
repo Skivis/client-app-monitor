@@ -20,17 +20,7 @@ def index():
 def show_clients(client_id=None):
     if not logged_in():
         redirect('/login')
-    if client_id is not None:
-        return "<p>Statistics for client: %s</p>" % client_id
 
-    return "<p>All Clients</p>"
-
-
-@get('/clients')
-@get('/clients/<client_id>')
-def show_clients(client_id=None):
-    if not logged_in():
-        redirect('/login')
     if client_id is not None:
         return "<p>Statistics for client: %s</p>" % client_id
 
