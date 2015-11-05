@@ -28,7 +28,7 @@ def show_clients(client_id=None):
         if not data:
             bottle.abort(404, "Sorry, client not found.")
 
-        return "<p>Statistics for client: %s</p>" % client_id
+        return template('client', client_id=client_id)
 
     with sqlite3.connect("data.db") as conn:
         conn.row_factory = sqlite3.Row
@@ -54,14 +54,30 @@ def save_client():
 
 
 @get('/logs')
-def show_logs():
+@get('/logs/<client_id>')
+def show_logs(client_id=None):
     logging.basicConfig(level=logging.DEBUG)
+
+    if client_id:
+        with sqlite3.connect("data.db") as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT id, client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs WHERE client_id=?", (client_id,))
+            data = cursor.fetchall()
+            cursor.close()
+
+        if not data:
+            bottle.abort(404, "No logs found.")
+
+        return template("client_logs", client=client_id, logs=data)
+
     with sqlite3.connect('data.db') as conn:
         conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute("SELECT id, client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs")
-        data = c.fetchall()
-        c.close()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs")
+        data = cursor.fetchall()
+        cursor.close()
 
     return template('logs', logs=data)
 
