@@ -5,7 +5,7 @@
     <title>Client Monitoring</title>
     <style>
       table {
-        table-layout:auto; font:11px/24px Verdana,Arial,sans-serif; border-collapse:collapse; width:720px }
+        table-layout:auto; font:13px/24px "Consolas", "Courier New" monospace; border-collapse:collapse; width:900px }
       th {
         padding:0 .5em; text-align:left }
       td {
@@ -21,8 +21,9 @@
     <table>
       <thead>
         <tr>
-          <th>Level</th>
+          <th>ID</th>
           <th>Time</th>
+          <th>Level</th>
           <th>Client Id</th>
           <th>CPU (%)</th>
           <th>Memory (%)</th>
@@ -32,6 +33,7 @@
       <tbody>
         %for item in logs:
         <tr>
+          <td>{{item["id"]}}</td>
           <td>{{item["time"]}}</td>
           <td>{{item["level"]}}</td>
           <td><a href="/clients/{{item["client_id"]}}">{{item["client_id"]}}</a></td>

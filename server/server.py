@@ -59,7 +59,7 @@ def show_logs():
     with sqlite3.connect('data.db') as conn:
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
-        c.execute("SELECT client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs")
+        c.execute("SELECT id, client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs")
         data = c.fetchall()
         c.close()
 

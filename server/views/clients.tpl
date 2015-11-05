@@ -5,7 +5,7 @@
     <title>Client Monitoring</title>
     <style>
       table {
-        table-layout:auto; font:11px/24px Verdana,Arial,sans-serif; border-collapse:collapse; width:620px }
+        table-layout:auto; font:13px/24px "Consolas", "Courier New"; border-collapse:collapse; width:900px }
       th {
         padding:0 .5em; text-align:left }
       td {
