@@ -1,3 +1,4 @@
+import time
 import psutil
 
 from psutil import AccessDenied, NoSuchProcess
@@ -21,6 +22,5 @@ class Process(psutil.Process):
 
     def update(self):
         self.state = self.as_dict(attrs=[
-            "pid", "name", "cpu_percent", "memory_percent", "cmdline",
-            "exe"])
-        print self.state['cpu_percent']
+            "cpu_percent", "cpu_times", "memory_percent", "num_threads"])
+        self.state['time'] = time.time()
