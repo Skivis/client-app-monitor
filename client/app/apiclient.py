@@ -11,8 +11,8 @@ class ApiClient(object):
 
     def notify_server(self):
         data = {"platform": "Windows", "client_id": self.client_id}
-        self.post(data, "clients")
+        self.post(json.dumps(data, sort_keys=True), "clients")
 
     def post(self, data, url):
         endpoint = self.base_url + url
-        requests.post(endpoint, data=json.dumps(data, sort_keys=True))
+        requests.post(endpoint, data=data)
