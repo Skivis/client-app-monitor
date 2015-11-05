@@ -6,6 +6,7 @@ from psutil import AccessDenied, NoSuchProcess
 class Process(psutil.Process):
 
     def __init__(self, name):
+        self.state = {}
         super(Process, self).__init__(self._pid(name))
 
     def _pid(self, name):
@@ -19,4 +20,7 @@ class Process(psutil.Process):
         raise NoSuchProcess(None, name=name, msg="process not found")
 
     def update(self):
-        print self.cpu_percent(interval=None)
+        self.state = self.as_dict(attrs=[
+            "pid", "name", "cpu_percent", "memory_percent", "cmdline",
+            "exe"])
+        print self.state['cpu_percent']
