@@ -9,7 +9,6 @@ class AppMonitor(object):
 
     def __init__(self, name):
         self.name = name
-        self.interval = 1
         self.setup()
 
     def setup(self):
