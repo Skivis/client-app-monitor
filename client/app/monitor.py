@@ -3,6 +3,7 @@ import uuid
 
 from app.logger import Logger
 from app.process import Process
+from app.utils import Timed
 
 
 class AppMonitor(object):
@@ -39,5 +40,6 @@ class AppMonitor(object):
         process = Process(self.name)
 
         while True:
-            self.monitor(process)
-            time.sleep(interval)
+            with Timed(interval) as timed:
+                self.monitor(process)
+            time.sleep(timed.interval)

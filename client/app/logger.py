@@ -13,7 +13,7 @@ class Logger(object):
         self.api_client = ApiClient(client_id)
 
     def _count_log(self):
-        if len(self._log) > 2:
+        if len(self._log) > 20:
             data = json.dumps(self._log)
             response = self.api_client.post(data, "logs")
             if response:
