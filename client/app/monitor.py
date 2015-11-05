@@ -13,7 +13,7 @@ class AppMonitor(object):
 
     def setup(self):
         client_id = uuid.uuid3(uuid.NAMESPACE_DNS, self.name)
-        self.logger = Logger(client_id)
+        self.logger = Logger(str(client_id))
 
     def monitor(self, process):
         process.update()
