@@ -20,6 +20,7 @@ CREATE TABLE logs (
   client_id VARCHAR NOT NULL,
   level VARCHAR NOT NULL,
   cpu_percent REAL NOT NULL,
+  system_cpu REAL NOT NULL,
   memory_percent REAL NULL,
   num_threads INTEGER,
   time VARCHAR NOT NULL
