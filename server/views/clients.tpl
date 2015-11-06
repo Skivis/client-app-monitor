@@ -1,4 +1,4 @@
-% rebase('base.tpl', title='All Clients - ')
+% rebase('base.tpl', title='All Clients')
 
     <section class="content">
       <h2 class="title">Clients</h2>

@@ -1,4 +1,4 @@
-% rebase('base.tpl', title='All Logs - ')
+% rebase('base.tpl', title='All Logs')
 
     <section class="content">
       <h2 class="title">Logs</h2>
@@ -12,6 +12,7 @@
           <th>Client Id</th>
           <th class="cpu">CPU (%)</th>
           <th>Memory (%)</th>
+          <th>System CPU (%)</th>
           <th>Threads</th>
         </tr>
       </thead>
@@ -24,6 +25,7 @@
           <td><a href="/logs/{{item["client_id"]}}">{{item["client_id"]}}</a></td>
           <td class="cpu">{{item["cpu_percent"]}}%</td>
           <td>{{item["memory_percent"]}}%</td>
+          <td>{{item["system_cpu"]}}</td>
           <td>{{item["num_threads"]}}</td>
         </tr>
         %end

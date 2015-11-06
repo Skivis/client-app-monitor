@@ -1,4 +1,4 @@
-% rebase('base.tpl', title=data["client_id"] + " - ")
+% rebase('base.tpl', title=data["client_id"])
 
     <section class="content">
       <h2 class="title"><a href="/clients">Clients</a> <span>/</span> {{data["client_id"]}}</h2>
