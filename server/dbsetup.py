@@ -5,14 +5,18 @@ con = sqlite3.connect('data.db')
 
 con.execute("""
 CREATE TABLE clients (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY,
   client_id VARCHAR NOT NULL UNIQUE,
-  platform VARCHAR NOT NULL
+  node VARCHAR NULL,
+  platform VARCHAR NULL,
+  processor VARCHAR NULL,
+  system VARCHAR NULL,
+  cpu_count INTEGER NULL
 )""")
 
 con.execute("""
 CREATE TABLE logs (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY,
   client_id VARCHAR NOT NULL,
   level VARCHAR NOT NULL,
   cpu_percent REAL NOT NULL,

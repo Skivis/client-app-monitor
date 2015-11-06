@@ -1,5 +1,7 @@
 import requests
 import json
+import platform
+import psutil
 
 from requests.exceptions import ConnectionError
 
@@ -12,7 +14,13 @@ class ApiClient(object):
         self.notify_server()
 
     def notify_server(self):
-        data = {"platform": "Windows", "client_id": self.client_id}
+        data = {}
+        data['platform'] = platform.platform()
+        data['node'] = platform.node()
+        data['processor'] = platform.processor()
+        data['system'] = platform.system()
+        data['cores'] = psutil.cpu_count()
+        data['client_id'] = self.client_id
         self.post(json.dumps(data, sort_keys=True), "clients")
 
     def post(self, data, url):

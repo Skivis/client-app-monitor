@@ -1,4 +1,4 @@
-% rebase('base.tpl', title='Clients')
+% rebase('base.tpl', title='All Clients - ')
 
     <section class="content">
       <h2 class="title">Clients</h2>
@@ -8,15 +8,19 @@
         <tr>
           <th class="id">ID</th>
           <th>Client Id</th>
-          <th>Platform</th>
+          <th>Node</th>
+          <th>System</th>
+          <th>Processor</th>
         </tr>
       </thead>
       <tbody>
-        %for host in clients:
+        %for client in clients:
         <tr>
-          <td class="id">{{host["id"]}}</td>
-          <td><a href="/clients/{{host["client_id"]}}">{{host["client_id"]}}</a></td>
-          <td>{{host["platform"]}}</td>
+          <td class="id">{{client["id"]}}</td>
+          <td><a href="/clients/{{client["client_id"]}}">{{client["client_id"]}}</a></td>
+          <td>{{client["node"]}}</td>
+          <td>{{client["system"]}}</td>
+          <td>{{client["processor"]}}</td>
         </tr>
         %end
       </tbody>

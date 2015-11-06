@@ -16,6 +16,7 @@ def index():
 @get('/clients')
 @get('/clients/<client_id>')
 def show_clients(client_id=None):
+    logging.basicConfig(level=logging.DEBUG)
     if client_id:
         with sqlite3.connect("data.db") as conn:
             conn.row_factory = sqlite3.Row
@@ -23,17 +24,20 @@ def show_clients(client_id=None):
             cursor.execute(
                 "SELECT * FROM clients WHERE client_id=?", (client_id,))
             data = cursor.fetchone()
+
+            logging.info(data)
+
             cursor.close()
 
         if not data:
             bottle.abort(404, "Sorry, client not found.")
 
-        return template('client', client_id=client_id)
+        return template('client', data=data)
 
     with sqlite3.connect("data.db") as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute("SELECT id, client_id, platform FROM clients")
+        cursor.execute("SELECT id, client_id, node, system, processor FROM clients")
         data = cursor.fetchall()
         cursor.close()
 
@@ -48,7 +52,7 @@ def save_client():
     with sqlite3.connect("data.db") as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT OR IGNORE INTO clients (client_id, platform) VALUES (?, ?)", data.values())
+            "INSERT OR IGNORE INTO clients (client_id, cpu_count, node, platform, processor, system) VALUES (?, ?, ?, ?, ?, ?)", data.values())
         conn.commit()
         cursor.close()
 
@@ -68,7 +72,7 @@ def show_logs(client_id=None):
             cursor.close()
 
         if not data:
-            bottle.abort(404, "No logs found.")
+            bottle.abort(404, "No logs found?.. A client application that doesn't hog all the CPU! Yeeaaay!")
 
         return template("client_logs", client=client_id, logs=data)
 
@@ -97,6 +101,22 @@ def save_logs():
                            (client_id, row['level'], row['cpu_percent'], row['memory_percent'], row['num_threads'], row['time']))
         conn.commit()
         cursor.close()
+
+
+@get('/static/<filename:path>')
+def send_static(filename):
+    return static_file(filename, root='/path/to/static/files')
+
+
+@get('/<filetype:re:(css|images)>/<path:path>')
+def serve_static(filetype, path):
+    "Serves static files"
+    return bottle.static_file(os.path.join(filetype, path), 'static')
+
+
+@get('/favicon.ico')
+def serve_icon():
+    return serve_static('images', 'icon.png')
 
 
 if __name__ == "__main__":
