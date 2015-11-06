@@ -31,5 +31,6 @@ python dbsetup.py
 and finally launch the client
 
 ```bash
-python client.py
+python client.py -n "Skype"
 ```
+where -n is simply the process name you want to monitor i.e "Skype", "Dropbox", "Spotify".
