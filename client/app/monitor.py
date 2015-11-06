@@ -1,5 +1,8 @@
 import time
 import uuid
+import psutil
+
+from psutil import AccessDenied
 
 from app.logger import Logger
 from app.process import Process
@@ -18,20 +21,24 @@ class AppMonitor(object):
 
     def monitor(self, process):
         process.update()
-
-        if process.state['cpu_percent'] < 1:
+        if not process.is_running():
             return
 
-        if process.state["cpu_percent"] > 10:
-            level = "WARNING"
-        elif process.state["cpu_percent"] > 20:
-            level = "CRITICAL"
-        else:
+        if process.state['cpu_percent'] > 50:
             level = "CAREFUL"
 
-        process.state['time'] = time.time()
+            status = process.state.copy()
+            status.update(self.host_status())
+            if process.state["cpu_percent"] > 70:
+                level = "CRITICAL"
+            if process.state["cpu_percent"] > 90:
+                level = "WARNING"
 
-        self.log(level, process.state)
+            self.log(level, status)
+
+    def host_status(self):
+        # Add more stuff
+        return {"system_cpu": psutil.cpu_percent()}
 
     def log(self, level, process):
         self.logger.log(level, process)
@@ -40,6 +47,10 @@ class AppMonitor(object):
         process = Process(self.name)
 
         while True:
-            with Timed(interval) as timed:
-                self.monitor(process)
-            time.sleep(timed.interval)
+            try:
+                with Timed(interval) as timed:
+                    self.monitor(process)
+                time.sleep(timed.interval)
+            except psutil.Error as e:
+                if isinstance(e, AccessDenied):
+                    print "access denied:", e
