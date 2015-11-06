@@ -22,12 +22,10 @@ class Logger(object):
             print response
 
     def log(self, level, state):
-
         if not self._log:
             self._log.append(self.client_id)
         else:
             state['level'] = level
             self._log.append(str(state))
-            print self._log
 
         self._count_log()

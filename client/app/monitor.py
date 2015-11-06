@@ -3,6 +3,7 @@ import uuid
 import psutil
 
 from psutil import AccessDenied
+from psutil import NoSuchProcess
 
 from app.logger import Logger
 from app.process import Process
@@ -11,8 +12,10 @@ from app.utils import Timed
 
 class AppMonitor(object):
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, config):
+        self.name = config['name']
+        self.limits = config['limits'].split(",")
+        print self.limits
         self.setup()
 
     def setup(self):
@@ -20,21 +23,25 @@ class AppMonitor(object):
         self.logger = Logger(str(client_id))
 
     def monitor(self, process):
-        process.update()
-        if not process.is_running():
+        if not process.alive():
+            raise NoSuchProcess(self.process_id)
+
+        state = process.get_current_state()
+
+        if state['cpu_percent'] < float(self.limits[0]):
             return
 
-        if process.state['cpu_percent'] > 50:
-            level = "CAREFUL"
+        level = "CAREFUL"
 
-            status = process.state.copy()
-            status.update(self.host_status())
-            if process.state["cpu_percent"] > 70:
-                level = "CRITICAL"
-            if process.state["cpu_percent"] > 90:
-                level = "WARNING"
+        if state["cpu_percent"] >= float(self.limits[1]):
+            level = "WARNING"
+        if state["cpu_percent"] >= float(self.limits[2]):
+            level = "CRITICAL"
 
-            self.log(level, status)
+        status = state.copy()
+        status.update(self.host_status())
+
+        self.log(level, status)
 
     def host_status(self):
         # Add more stuff

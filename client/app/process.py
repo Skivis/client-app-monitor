@@ -8,9 +8,10 @@ class Process(psutil.Process):
 
     def __init__(self, name):
         self.state = {}
-        super(Process, self).__init__(self._pid(name))
+        self.process_id = self.find_pid(name)
+        super(Process, self).__init__(self.process_id)
 
-    def _pid(self, name):
+    def find_pid(self, name):
         for process in psutil.process_iter():
             try:
                 if name in process.name():
@@ -22,5 +23,15 @@ class Process(psutil.Process):
 
     def update(self):
         self.state = self.as_dict(attrs=[
-            "cpu_percent", "memory_percent", "num_threads"])
+            "cpu_percent", "memory_percent", "num_threads"], ad_value="AD")
         self.state['time'] = time.time()
+        return self.state
+
+    def get_current_state(self):
+        state = self.as_dict(attrs=[
+            "cpu_percent", "memory_percent", "num_threads"], ad_value="AD")
+        state['time'] = time.time()
+        return state
+
+    def alive(self):
+        return self.is_running()
