@@ -73,6 +73,9 @@ def show_logs(client_id=None):
             data = cursor.fetchall()
             cursor.close()
 
+        if not data:
+            bottle.abort(404, "Sorry, you're lost!")
+
         return template("client_logs", client=client_id, logs=data)
 
     with sqlite3.connect('data.db') as conn:
