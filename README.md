@@ -2,25 +2,29 @@
 
 A tiny experimental monitoring tingy that monitors a client applications CPU usage and sends the gathered information to a server.
 
+## Screenshot
+![Screenshot](https://raw.githubusercontent.com/Skivis/client-app-monitor/master/server/screenshot.png)
+
 ## Dependencies
 
-The client-part uses the psutil library to fetch cpu and related process information. It's available via pip:
+ - [psutil](https://pythonhosted.org/psutil/)
+ - [bottle](http://bottlepy.org/)
+
 ```bash
 $ pip install psutil
 ```
 
-The web server part uses a micro web-framework called *Bottle* and is also availabla via pip:
 ```bash
 $ pip install bottle
 ```
 
 ## How to run?
 
-First launch the server:
+Launch the server: (browse to http://localhost:1337/)
 ```bash
 python server.py
 ```
-and then run the database setup script:
+...run the db setup script:
 ```bash
 python dbsetup.py
 ```
