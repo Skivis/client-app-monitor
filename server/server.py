@@ -4,6 +4,7 @@ import collections
 import ast
 import json
 import sqlite3
+import os
 
 from bottle import Bottle, get, post, redirect, request, template
 
@@ -68,19 +69,16 @@ def show_logs(client_id=None):
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT id, client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs WHERE client_id=?", (client_id,))
+                "SELECT id, client_id, level, cpu_percent, memory_percent, system_cpu, num_threads, time FROM logs WHERE client_id=?", (client_id,))
             data = cursor.fetchall()
             cursor.close()
-
-        if not data:
-            bottle.abort(404, "No logs found?.. A client application that doesn't hog all the CPU! Yeeaaay!")
 
         return template("client_logs", client=client_id, logs=data)
 
     with sqlite3.connect('data.db') as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute("SELECT id, client_id, level, cpu_percent, memory_percent, num_threads, time FROM logs")
+        cursor.execute("SELECT id, client_id, level, cpu_percent, memory_percent, system_cpu, num_threads, time FROM logs")
         data = cursor.fetchall()
         cursor.close()
 
@@ -98,28 +96,13 @@ def save_logs():
         cursor = conn.cursor()
         for row in data:
             row = ast.literal_eval(row)
-            cursor.execute("INSERT INTO logs (client_id, level, cpu_percent, memory_percent, num_threads, time) VALUES (?, ?, ?, ?, ?, ?)",
-                           (client_id, row['level'], row['cpu_percent'], row['memory_percent'], row['num_threads'], row['time']))
+            cursor.execute("INSERT INTO logs (client_id, level, cpu_percent, system_cpu, memory_percent, num_threads, time) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                           (client_id, row['level'], row['cpu_percent'], row['system_cpu'], row['memory_percent'], row['num_threads'], row['time']))
         conn.commit()
         cursor.close()
-
-
-@app.get('/static/<filename:path>')
-def send_static(filename):
-    return static_file(filename, root='/path/to/static/files')
-
-
-@app.get('/<filetype:re:(css|images)>/<path:path>')
-def serve_static(filetype, path):
-    "Serves static files"
-    return bottle.static_file(os.path.join(filetype, path), 'static')
-
-
-@app.get('/favicon.ico')
-def serve_icon():
-    return serve_static('images', 'icon.png')
 
 
 if __name__ == "__main__":
     bottle.debug(True)
     bottle.run(app=app, host='0.0.0.0', port=1337, reloader=True)
+    bottle.TEMPLATES.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "views/")))
