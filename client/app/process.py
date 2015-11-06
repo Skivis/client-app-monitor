@@ -21,12 +21,6 @@ class Process(psutil.Process):
 
         raise NoSuchProcess(None, name=name, msg="process not found")
 
-    def update(self):
-        self.state = self.as_dict(attrs=[
-            "cpu_percent", "memory_percent", "num_threads"], ad_value="AD")
-        self.state['time'] = time.time()
-        return self.state
-
     def get_current_state(self):
         state = self.as_dict(attrs=[
             "cpu_percent", "memory_percent", "num_threads"], ad_value="AD")
