@@ -5,16 +5,17 @@ import ast
 import json
 import sqlite3
 
-from bottle import get, post, redirect, request, template
+from bottle import Bottle, get, post, redirect, request, template
 
+app = Bottle()
 
-@get('/')
+@app.get('/')
 def index():
     redirect("/logs")
 
 
-@get('/clients')
-@get('/clients/<client_id>')
+@app.get('/clients')
+@app.get('/clients/<client_id>')
 def show_clients(client_id=None):
     logging.basicConfig(level=logging.DEBUG)
     if client_id:
@@ -44,7 +45,7 @@ def show_clients(client_id=None):
     return template('clients', clients=data)
 
 
-@post('/clients')
+@app.post('/clients')
 def save_client():
     logging.basicConfig(level=logging.DEBUG)
     data = json.load(request.body, object_pairs_hook=collections.OrderedDict)
@@ -57,8 +58,8 @@ def save_client():
         cursor.close()
 
 
-@get('/logs')
-@get('/logs/<client_id>')
+@app.get('/logs')
+@app.get('/logs/<client_id>')
 def show_logs(client_id=None):
     logging.basicConfig(level=logging.DEBUG)
 
@@ -86,7 +87,7 @@ def show_logs(client_id=None):
     return template('logs', logs=data)
 
 
-@post('/logs')
+@app.post('/logs')
 def save_logs():
     logging.basicConfig(level=logging.DEBUG)
     data = json.load(request.body, object_pairs_hook=collections.OrderedDict)
@@ -103,22 +104,22 @@ def save_logs():
         cursor.close()
 
 
-@get('/static/<filename:path>')
+@app.get('/static/<filename:path>')
 def send_static(filename):
     return static_file(filename, root='/path/to/static/files')
 
 
-@get('/<filetype:re:(css|images)>/<path:path>')
+@app.get('/<filetype:re:(css|images)>/<path:path>')
 def serve_static(filetype, path):
     "Serves static files"
     return bottle.static_file(os.path.join(filetype, path), 'static')
 
 
-@get('/favicon.ico')
+@app.get('/favicon.ico')
 def serve_icon():
     return serve_static('images', 'icon.png')
 
 
 if __name__ == "__main__":
     bottle.debug(True)
-    bottle.run(host='0.0.0.0', port=1337, reloader=True)
+    bottle.run(app=app, host='0.0.0.0', port=1337, reloader=True)
