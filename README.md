@@ -20,13 +20,13 @@ $ pip install bottle
 
 ## How to run?
 
-Launch the server: (browse to http://localhost:1337/)
-```bash
-python server.py
-```
-...run the db setup script:
+Run the db setup script:
 ```bash
 python dbsetup.py
+```
+...launch the server: (and browse to http://localhost:1337/)
+```bash
+python server.py
 ```
 and finally launch the client
 
