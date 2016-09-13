@@ -9,7 +9,7 @@ from requests.exceptions import ConnectionError
 class ApiClient(object):
 
     def __init__(self, client_id):
-        self.base_url = "http://localhost:1337/"
+        self.base_url = "http://127.0.0.1:1337/"
         self.client_id = client_id
         self.notify_server()
 

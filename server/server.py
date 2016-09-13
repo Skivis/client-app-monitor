@@ -23,11 +23,8 @@ def show_clients(client_id=None):
         with sqlite3.connect("data.db") as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM clients WHERE client_id=?", (client_id,))
+            cursor.execute("SELECT * FROM clients WHERE client_id=?", (client_id,))
             data = cursor.fetchone()
-
-            logging.info(data)
 
             cursor.close()
 
@@ -50,7 +47,6 @@ def show_clients(client_id=None):
 def save_client():
     logging.basicConfig(level=logging.DEBUG)
     data = json.load(request.body, object_pairs_hook=collections.OrderedDict)
-    logging.info(data)
     with sqlite3.connect("data.db") as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -68,13 +64,12 @@ def show_logs(client_id=None):
         with sqlite3.connect("data.db") as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute(
-                "SELECT id, client_id, level, cpu_percent, memory_percent, system_cpu, num_threads, time FROM logs WHERE client_id=?", (client_id,))
+            cursor.execute("SELECT * FROM logs WHERE client_id=?", (client_id,))
             data = cursor.fetchall()
             cursor.close()
 
-        if not data:
-            bottle.abort(404, "Sorry, you're lost!")
+        # if not data:
+        #     bottle.abort(404, "Sorry, you're lost!")
 
         return template("client_logs", client=client_id, logs=data)
 
@@ -108,4 +103,3 @@ def save_logs():
 if __name__ == "__main__":
     bottle.debug(True)
     bottle.run(app=app, host='0.0.0.0', port=1337, reloader=True)
-    bottle.TEMPLATES.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "views/")))

@@ -15,7 +15,6 @@ class AppMonitor(object):
     def __init__(self, config):
         self.name = config['name']
         self.limits = config['limits'].split(",")
-        print self.limits
         self.setup()
 
     def setup(self):
@@ -45,7 +44,7 @@ class AppMonitor(object):
 
     def host_status(self):
         # Add more stuff
-        return {"system_cpu": psutil.cpu_percent()}
+        return { "system_cpu": psutil.cpu_percent() }
 
     def log(self, level, process):
         self.logger.log(level, process)
