@@ -18,19 +18,19 @@ $ pip install psutil
 $ pip install bottle
 ```
 
-## How to run?
+## Usage?
 
 Run the db setup script:
 ```bash
 python dbsetup.py
 ```
-...launch the server: (and browse to http://localhost:1337/)
+Launch the server: (and browse to http://localhost:1337/)
 ```bash
 python server.py
 ```
 and finally launch the client
 
 ```bash
-python client.py -n "Skype"
+python client.py -n "skype"
 ```
-where -n is simply the process name you want to monitor i.e "Skype", "Dropbox", "Spotify".
+where -n is simply the process name you want to monitor i.e "skype", "Dropbox", "Spotify" or whatever application you want to monitor.
